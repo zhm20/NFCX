@@ -12,13 +12,13 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 	"unicode"
 
+	"github.com/BennyThink/NFCX/internal/localdata"
 	"github.com/BennyThink/NFCX/internal/nfc"
 )
 
@@ -532,27 +532,7 @@ func (s *Store) Save(path string) error {
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
-		return err
-	}
-	temporary, err := os.CreateTemp(filepath.Dir(path), ".nfcx-keys-*")
-	if err != nil {
-		return err
-	}
-	temporaryPath := temporary.Name()
-	defer os.Remove(temporaryPath)
-	if err := temporary.Chmod(0o600); err != nil {
-		temporary.Close()
-		return err
-	}
-	if _, err := temporary.Write(append(encoded, '\n')); err != nil {
-		temporary.Close()
-		return err
-	}
-	if err := temporary.Close(); err != nil {
-		return err
-	}
-	return os.Rename(temporaryPath, path)
+	return localdata.WriteAppFileAtomic(path, append(encoded, '\n'))
 }
 
 func (s *Store) Export(writer io.Writer) (int, error) {

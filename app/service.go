@@ -19,7 +19,6 @@ import (
 	"github.com/BennyThink/NFCX/internal/nfc"
 	"github.com/BennyThink/NFCX/internal/nfc/libnfc"
 	runtimebundle "github.com/BennyThink/NFCX/internal/runtime"
-	"github.com/BennyThink/NFCX/internal/telemetry"
 	"github.com/BennyThink/NFCX/internal/workbench"
 	"github.com/BennyThink/NFCX/internal/workflow"
 )
@@ -108,8 +107,6 @@ type Service struct {
 	preflights       map[string]writePreflightRecord
 	uidPreflights    map[string]uidPreflightRecord
 	dialogs          fileDialogs
-	telemetry        *telemetry.Client
-	telemetryStore   *telemetry.Store
 }
 
 // NewService wires the application service to the current libnfc backend.
@@ -147,16 +144,10 @@ func newService(emitter EventEmitter, config mockTaskConfig) *Service {
 	configRoot, _ := os.UserConfigDir()
 	keyStorePath := ""
 	uidBackupRoot := ""
-	telemetryPath := ""
 	if configRoot != "" {
 		keyStorePath = filepath.Join(configRoot, "NFCX", "keys.json")
 		uidBackupRoot = filepath.Join(configRoot, "NFCX", "uid-backups")
-		telemetryPath = filepath.Join(configRoot, "NFCX", "telemetry.json")
 		_ = keyStore.Load(keyStorePath)
-	}
-	telemetryStore := telemetry.NewStore(telemetryPath)
-	if telemetryPath != "" {
-		_ = telemetryStore.Load()
 	}
 	return &Service{
 		emitter:          emitter,
@@ -181,8 +172,6 @@ func newService(emitter EventEmitter, config mockTaskConfig) *Service {
 		preflights:       make(map[string]writePreflightRecord),
 		uidPreflights:    make(map[string]uidPreflightRecord),
 		dialogs:          noFileDialogs{},
-		telemetry:        telemetry.NewClient(telemetryStore),
-		telemetryStore:   telemetryStore,
 	}
 }
 

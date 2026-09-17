@@ -136,10 +136,41 @@ func (l *Locator) Resolve(executable Executable) (string, error) {
 			if err := verifyHash(resolvedPath, executable.SHA256); err != nil {
 				return "", fmt.Errorf("%s: %w", executable.ID, err)
 			}
+		} else {
+			manifestPath := filepath.Join(resolvedRoot, "manifest.json")
+			if _, manifestErr := os.Stat(manifestPath); manifestErr == nil {
+				if err := verifyManifestExecutable(resolvedRoot, resolvedPath); err != nil {
+					return "", fmt.Errorf("%s: %w", executable.ID, err)
+				}
+			} else if !errors.Is(manifestErr, os.ErrNotExist) {
+				return "", fmt.Errorf("inspect runtime manifest: %w", manifestErr)
+			}
 		}
 		return resolvedPath, nil
 	}
 	return "", fmt.Errorf("%w: %s", ErrExecutableNotFound, executable.ID)
+}
+
+func verifyManifestExecutable(root, path string) error {
+	manifest, err := ReadManifest(filepath.Join(root, "manifest.json"))
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(root, path)
+	if err != nil {
+		return err
+	}
+	relative = filepath.ToSlash(relative)
+	for _, entry := range manifest.Files {
+		if entry.Path != relative {
+			continue
+		}
+		if !entry.Executable {
+			return fmt.Errorf("%w: %s is not marked executable in runtime manifest", ErrInvalidManifest, relative)
+		}
+		return verifyHash(path, entry.SHA256)
+	}
+	return fmt.Errorf("%w: executable %s is not listed in runtime manifest", ErrHashMismatch, relative)
 }
 
 func validBaseName(name string) bool {

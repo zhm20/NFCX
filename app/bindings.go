@@ -1,7 +1,6 @@
 package app
 
 import "github.com/BennyThink/NFCX/internal/diagnostic"
-import "github.com/BennyThink/NFCX/internal/telemetry"
 
 // Bindings is the only object exposed to the Wails frontend.
 type Bindings struct {
@@ -14,15 +13,6 @@ func (b *Bindings) GetDashboard() DashboardDTO {
 }
 
 func (b *Bindings) GetDiagnostics() diagnostic.Report { return b.service.Diagnostics() }
-
-func (b *Bindings) GetTelemetrySettings() TelemetrySettingsDTO { return b.service.TelemetrySettings() }
-func (b *Bindings) SetTelemetryEnabled(enabled bool) (TelemetrySettingsDTO, error) {
-	return b.service.SetTelemetryEnabled(enabled)
-}
-func (b *Bindings) TrackTelemetry(event string) { b.service.TrackTelemetry(event) }
-func (b *Bindings) CheckForUpdates() (telemetry.UpdateResult, error) {
-	return b.service.CheckForUpdates()
-}
 
 func (b *Bindings) RefreshDevices() ([]DeviceDTO, error) {
 	return b.service.RefreshDevices()
