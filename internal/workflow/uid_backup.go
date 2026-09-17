@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/BennyThink/NFCX/internal/localdata"
 )
 
 type FileUIDBackupStore struct {
@@ -36,10 +38,7 @@ func (s FileUIDBackupStore) Save(ctx context.Context, backup UIDBackup) (string,
 	if err := ctx.Err(); err != nil {
 		return "", err
 	}
-	if err := os.MkdirAll(s.Root, 0o700); err != nil {
-		return "", err
-	}
-	if err := os.Chmod(s.Root, 0o700); err != nil {
+	if err := localdata.EnsurePrivateDir(s.Root); err != nil {
 		return "", err
 	}
 	createdAt := backup.CreatedAt
@@ -89,6 +88,10 @@ func (s FileUIDBackupStore) Save(ctx context.Context, backup UIDBackup) (string,
 		return "", err
 	}
 	keep = true
+	if err := localdata.HardenFile(path); err != nil {
+		_ = os.Remove(path)
+		return "", err
+	}
 	return path, nil
 }
 

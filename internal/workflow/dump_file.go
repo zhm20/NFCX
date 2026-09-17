@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/BennyThink/NFCX/internal/localdata"
 	"github.com/BennyThink/NFCX/internal/mifare"
 	"github.com/BennyThink/NFCX/internal/nfc"
 )
@@ -248,29 +248,7 @@ func LoadRawDump(path string) (DumpResult, error) {
 }
 
 func atomicWriteFile(path string, data []byte) error {
-	directory := filepath.Dir(path)
-	temporary, err := os.CreateTemp(directory, ".nfcx-write-*")
-	if err != nil {
-		return err
-	}
-	temporaryPath := temporary.Name()
-	defer os.Remove(temporaryPath)
-	if err := temporary.Chmod(0o600); err != nil {
-		temporary.Close()
-		return err
-	}
-	if _, err := temporary.Write(data); err != nil {
-		temporary.Close()
-		return err
-	}
-	if err := temporary.Sync(); err != nil {
-		temporary.Close()
-		return err
-	}
-	if err := temporary.Close(); err != nil {
-		return err
-	}
-	return os.Rename(temporaryPath, path)
+	return localdata.WriteSensitiveFileAtomic(path, data)
 }
 
 func layoutName(layout mifare.Layout) string {

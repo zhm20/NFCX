@@ -8,9 +8,9 @@
 
 NFCX brings reader discovery, card information, reads, protected writes, raw dumps, key management, and recovery workflows into one desktop application for macOS, Windows, and Linux. It is for MIFARE Classic cards you own or are authorized to test.
 
-NFCX is open source and uses a clear, direct GUI so NFC work does not depend on a collection of command-line tools.
+This fork keeps the MIT-licensed NFCX codebase but is maintained as a local-only hardened build. The desktop runtime is intentionally offline.
 
-Website: [nfcx.tools](https://nfcx.tools) · Downloads: [GitHub Releases](https://github.com/BennyThink/NFCX/releases)
+Repository: [zhm20/NFCX](https://github.com/zhm20/NFCX)
 
 # What NFCX can do
 
@@ -40,12 +40,9 @@ NFCX packages its NFC runtime. You do not need to install libnfc, mfoc, mfcuk, o
 - macOS: an unsigned release can show a Gatekeeper warning. Use **System Settings → Privacy & Security** to allow it to open when prompted.
 - Windows: starting NFCX may require the [FTDI virtual-COM/serial driver](https://ftdichip.com/drivers/).
 
-# Download and install
+# Build and run locally
 
-1. Open [GitHub Releases](https://github.com/BennyThink/NFCX/releases).
-2. Download the archive or installer for your operating system.
-3. Install or unpack it, then install the reader driver if needed.
-4. Connect the reader and start NFCX.
+This fork is intended to be built from source. The normal build still fetches pinned third-party NFC toolchain sources and verifies their recorded SHA-256 values; the resulting desktop runtime does not require Internet access. See [release/build documentation](docs/release.md).
 
 # Quick start
 
@@ -64,13 +61,11 @@ NFCX packages its NFC runtime. You do not need to install libnfc, mfoc, mfcuk, o
 
 ![NFCX key library](docs/images/key-lib.jpg)
 
-# Privacy and anonymous telemetry
+# Local-only privacy and security
 
-Anonymous telemetry is entirely optional. You can choose whether to enable it at first launch and change that choice later in **About**.
-When enabled, NFCX sends only an anonymous installation identifier, NFCX version, coarse operating-system type, allowlisted feature events, and event time to understand feature usage and platform distribution.
+This fork removes anonymous telemetry, the telemetry worker, first-run telemetry consent, and GitHub Releases update checks. The desktop runtime contains no intentional network requests.
 
-NFCX does **not** collect card UIDs, Key A/Key B values, dumps, card contents, reader identifiers, usernames, device names, machine IDs, file paths, logs, IP addresses, or other personal information.
-The collector does not retain raw request headers or IP data. See the [telemetry specification](docs/specs/14-telemetry.md) for implementation details.
+Keys, card dumps, metadata sidecars, and UID backups are sensitive local data. NFCX restricts app-owned sensitive directories/files where the OS supports it, and warns before exporting plaintext key dictionaries or dump data. See [docs/security.md](docs/security.md).
 
 # License and third-party software
 
@@ -82,11 +77,9 @@ Read [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistributing NFCX
 
 # Project links
 
-- [Website](https://nfcx.tools)
-- [GitHub repository](https://github.com/BennyThink/NFCX)
-- [Download releases](https://github.com/BennyThink/NFCX/releases)
+- [Hardened fork repository](https://github.com/zhm20/NFCX)
 - [Documentation index](docs/README.md)
-
+- [Local-only security policy](docs/security.md)
 
 # Responsible use
 

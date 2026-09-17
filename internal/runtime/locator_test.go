@@ -75,3 +75,61 @@ func TestLocatorRejectsSymlinkEscape(t *testing.T) {
 		t.Fatalf("symlink escape error = %v", err)
 	}
 }
+
+func TestLocatorUsesReleaseManifestWhenDescriptorHashIsEmpty(t *testing.T) {
+	root := t.TempDir()
+	name := "engine"
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+	path := filepath.Join(root, name)
+	contents := []byte("release-fixture")
+	if err := os.WriteFile(path, contents, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	wanted := fmt.Sprintf("%x", sha256.Sum256(contents))
+	manifest := runtimebundle.Manifest{
+		SchemaVersion: runtimebundle.ManifestSchemaVersion,
+		Platform:      runtime.GOOS + "-" + runtime.GOARCH,
+		NFCXVersion:   "test",
+		Commit:        "test-commit",
+		Files:         []runtimebundle.ManifestFile{{Path: name, SHA256: wanted, Size: int64(len(contents)), Executable: true}},
+	}
+	if err := runtimebundle.WriteManifest(filepath.Join(root, "manifest.json"), manifest); err != nil {
+		t.Fatal(err)
+	}
+	executable := runtimebundle.Executable{ID: "fixture", FileName: "engine", WindowsFileName: "engine.exe"}
+	if _, err := runtimebundle.NewLocator(root).Resolve(executable); err != nil {
+		t.Fatalf("resolve release executable: %v", err)
+	}
+	if err := os.WriteFile(path, []byte("tampered-runtime"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := runtimebundle.NewLocator(root).Resolve(executable); !errors.Is(err, runtimebundle.ErrHashMismatch) {
+		t.Fatalf("tampered release runtime error = %v", err)
+	}
+}
+
+func TestLocatorRejectsUnlistedExecutableWhenReleaseManifestExists(t *testing.T) {
+	root := t.TempDir()
+	name := "engine"
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+	if err := os.WriteFile(filepath.Join(root, name), []byte("fixture"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	manifest := runtimebundle.Manifest{
+		SchemaVersion: runtimebundle.ManifestSchemaVersion,
+		Platform:      runtime.GOOS + "-" + runtime.GOARCH,
+		NFCXVersion:   "test",
+		Commit:        "test-commit",
+	}
+	if err := runtimebundle.WriteManifest(filepath.Join(root, "manifest.json"), manifest); err != nil {
+		t.Fatal(err)
+	}
+	_, err := runtimebundle.NewLocator(root).Resolve(runtimebundle.Executable{ID: "fixture", FileName: "engine", WindowsFileName: "engine.exe"})
+	if !errors.Is(err, runtimebundle.ErrHashMismatch) {
+		t.Fatalf("unlisted release executable error = %v", err)
+	}
+}

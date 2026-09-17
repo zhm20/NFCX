@@ -8,9 +8,9 @@
 
 NFCX 将读卡器发现、卡片信息、读取写入等功能集中到一个 macOS、Windows 与 Linux 桌面应用中，适用于你拥有或获准测试的 MIFARE Classic 卡片。
 
-NFCX 坚持开源，并用清晰、直接的 GUI 让 NFC 操作不再依赖零散的命令行工具。
+本 Fork 保留 NFCX 的 MIT 许可代码基础，并按“本地离线、自用安全加固”方向维护；桌面运行时刻意保持离线。
 
-官网：[nfcx.tools](https://nfcx.tools) · 下载：[GitHub Releases](https://github.com/BennyThink/NFCX/releases)
+仓库：[zhm20/NFCX](https://github.com/zhm20/NFCX)
 
 # NFCX 能做什么
 
@@ -41,12 +41,9 @@ NFCX 自带 NFC 运行时；不需要另外安装 libnfc、mfoc、mfcuk 或命�
 - macOS：未签名版本可能显示 Gatekeeper 警告；可在“系统设置 → 隐私与安全性”中按提示允许打开。 
 - Windows：启动 NFCX 可能需要先安装请安装 [FTDI 虚拟串口驱动](https://ftdichip.com/drivers/)
 
-# 下载和安装
+# 本地源码构建
 
-1. 打开 [GitHub Releases](https://github.com/BennyThink/NFCX/releases)。
-2. 下载适合你操作系统的安装包或压缩包。
-3. 安装或解压；必要时安装读卡器驱动。
-4. 连接读卡器并启动 NFCX。
+本 Fork 以源码构建为主。正常构建流程仍会下载固定版本的第三方 NFC 工具链源码，并使用仓库记录的 SHA-256 校验；构建完成后的桌面运行时不需要访问互联网。详见 [发布/构建文档](docs/release.md)。
 
 # 快速开始
 
@@ -66,13 +63,11 @@ NFCX 自带 NFC 运行时；不需要另外安装 libnfc、mfoc、mfcuk 或命�
 
 ![NFCX 密钥管理](docs/images/key-lib.jpg)
 
-# 隐私和匿名遥测
+# 本地隐私与安全策略
 
-匿名遥测完全可选。首次启动时可以选择是否启用，之后也能随时在 **关于** 中更改。
-启用后，NFCX 只发送匿名安装标识、NFCX 版本、粗粒度操作系统类型、白名单功能事件和事件时间，用于了解功能使用情况与平台分布。
+本 Fork 已移除匿名遥测、遥测 Worker、首次启动遥测授权和 GitHub Releases 在线更新检查；桌面运行时不包含有意的网络请求。
 
-NFCX **不会**采集卡片 UID、Key A/Key B、dump、卡片内容、读卡器标识、用户名、设备名、Machine ID、文件路径、日志、IP 地址或其他个人信息。
-收集端不会保留原始请求头或 IP 数据。实现细节见[遥测规格](docs/specs/14-telemetry.md)。
+密钥、卡片 Dump、元数据 sidecar 和 UID 备份都按敏感本地数据处理。操作系统支持时，NFCX 会限制应用自有敏感目录/文件权限，并在导出明文密钥字典或 Dump 前提示风险。详见 [docs/security.md](docs/security.md)。
 
 # 许可证与第三方软件
 
@@ -84,10 +79,9 @@ NFCX 会动态链接 LGPL-3.0-or-later 的 libnfc，并重新分发独立的 GPL
 
 # 项目链接
 
-- [官网](https://nfcx.tools)
-- [GitHub 仓库](https://github.com/BennyThink/NFCX)
-- [下载发布版](https://github.com/BennyThink/NFCX/releases)
+- [安全加固 Fork 仓库](https://github.com/zhm20/NFCX)
 - [文档索引](docs/README.md)
+- [本地安全策略](docs/security.md)
 
 **请仅将 NFCX 用于你拥有或获得明确授权测试的卡片和系统。**
 
