@@ -8,7 +8,7 @@
 
 NFCX 将读卡器发现、卡片信息、读取写入等功能集中到一个 macOS、Windows 与 Linux 桌面应用中，适用于你拥有或获准测试的 MIFARE Classic 卡片。
 
-本私有 Fork 保留 NFCX 的 MIT 许可代码基础，并按“本地离线、自用安全加固”方向维护；桌面运行时刻意保持离线。
+本 Fork 保留 NFCX 的 MIT 许可代码基础，并按“本地离线、自用安全加固”方向维护；桌面运行时刻意保持离线。
 
 仓库：[zhm20/NFCX](https://github.com/zhm20/NFCX)
 
@@ -79,7 +79,7 @@ NFCX 会动态链接 LGPL-3.0-or-later 的 libnfc，并重新分发独立的 GPL
 
 # 项目链接
 
-- [私有 Fork 仓库](https://github.com/zhm20/NFCX)
+- [安全加固 Fork 仓库](https://github.com/zhm20/NFCX)
 - [文档索引](docs/README.md)
 - [本地安全策略](docs/security.md)
 
