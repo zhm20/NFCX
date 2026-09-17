@@ -8,7 +8,7 @@
 
 NFCX brings reader discovery, card information, reads, protected writes, raw dumps, key management, and recovery workflows into one desktop application for macOS, Windows, and Linux. It is for MIFARE Classic cards you own or are authorized to test.
 
-This private fork keeps the MIT-licensed NFCX codebase but is maintained as a local-only hardened build. The desktop runtime is intentionally offline.
+This fork keeps the MIT-licensed NFCX codebase but is maintained as a local-only hardened build. The desktop runtime is intentionally offline.
 
 Repository: [zhm20/NFCX](https://github.com/zhm20/NFCX)
 
@@ -77,7 +77,7 @@ Read [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistributing NFCX
 
 # Project links
 
-- [Private fork repository](https://github.com/zhm20/NFCX)
+- [Hardened fork repository](https://github.com/zhm20/NFCX)
 - [Documentation index](docs/README.md)
 - [Local-only security policy](docs/security.md)
 
